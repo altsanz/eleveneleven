@@ -5,7 +5,7 @@ interface NumberWrapperProps {
   number: number;
 }
 const  NumberWrapper: React.FC<NumberWrapperProps> = ({number}: NumberWrapperProps) => {
-  const digits = number.toString(10).split('').map((digit)=> <Digit>{parseInt(digit, 10)}</Digit>);
+  const digits = number.toString(10).split('').map((digit, i)=> <Digit key={parseInt(digit, 10) + `${i}`}>{parseInt(digit, 10)}</Digit>);
   return (<>
     {digits}
   </>
@@ -15,9 +15,9 @@ const  NumberWrapper: React.FC<NumberWrapperProps> = ({number}: NumberWrapperPro
 
 export default NumberWrapper;
 
-export function Digit({children}: { children: number}) {
+export function Digit({reveal=false, children}: { children: number, reveal?: boolean}) {
   return (
-    <div>{children}</div>
+    <div>{reveal? children: '*'}</div>
   )
 }
 

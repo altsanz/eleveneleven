@@ -3,9 +3,10 @@ import './App.css';
 import NumberWrapper from './components/NumberWrapper';
 
 function App() {
+  const number = React.useMemo(() => Math.round(Math.random() * 99999), [])
   return (
     <div className="App h-screen">
-      <NumberWrapper number={11}/>
+      <NumberWrapper number={number}/>
     </div>
   );
 }
