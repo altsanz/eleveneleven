@@ -5,11 +5,16 @@ interface DigitMetadata {
 }
 interface NumberWrapperProps {
   number: number;
+  onComplete: () => void;
 }
 const NumberWrapper: React.FC<NumberWrapperProps> = ({
   number,
+  onComplete,
 }: NumberWrapperProps) => {
-  const [digitsTemp, activeDigit] = useRevealingNumber(number);
+  const [digitsTemp, activeDigit, complete] = useRevealingNumber(number);
+  React.useEffect(() => {
+    complete && onComplete();
+  }, [complete, onComplete]);
   return (
     <>
       {digitsTemp.map(({ digit, reveal }, i) => (
@@ -27,14 +32,16 @@ const NumberWrapper: React.FC<NumberWrapperProps> = ({
 
 const useRevealingNumber = (
   number: number
-): Readonly<[ReadonlyArray<DigitMetadata>, number]> => {
+): Readonly<[ReadonlyArray<DigitMetadata>, number, boolean]> => {
   const [activeDigit, setActiveDigit] = React.useState(0);
+  console.log({ number });
   const [digitsTemp, setDigits] = React.useState<ReadonlyArray<DigitMetadata>>(
     number
       .toString(10)
       .split("")
       .map((digit) => ({ digit, reveal: false }))
   );
+
   React.useEffect(() => {
     const revealWhenMatch = ({ key }: KeyboardEvent) => {
       const pressedKeyMatchesActiveDigit =
@@ -47,11 +54,23 @@ const useRevealingNumber = (
         );
       pressedKeyMatchesActiveDigit && setActiveDigit(activeDigit + 1);
     };
+
     document.addEventListener("keypress", revealWhenMatch, false);
     return () => document.removeEventListener("keypress", revealWhenMatch);
   }, [activeDigit, digitsTemp]);
 
-  return [digitsTemp, activeDigit] as const;
+  React.useEffect(() => {
+    setActiveDigit(0);
+    setDigits(
+      number
+        .toString(10)
+        .split("")
+        .map((digit) => ({ digit, reveal: false }))
+    );
+  }, [number]);
+
+  const fullNumberRevealed = activeDigit === digitsTemp.length;
+  return [digitsTemp, activeDigit, fullNumberRevealed] as const;
 };
 
 export default NumberWrapper;
@@ -71,10 +90,3 @@ export function Digit({
     </div>
   );
 }
-// document.addEventListener('keypress', (ev: KeyboardEvent) => console.log(ev.key), false);
-
-/**
- * 1. recibe numero con addEventListener
- * 2. es el numero igual que el activo?
- * 3. SI: revela activo, mueve el activo al siguiente
- */
