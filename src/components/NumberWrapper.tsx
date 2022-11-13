@@ -18,27 +18,20 @@ const NumberWrapper: React.FC<NumberWrapperProps> = ({
   );
   React.useEffect(() => {
     const revealWhenMatch = ({ key }: KeyboardEvent) => {
-      const pressedKeyMatchesACtiveDigit =
+      const pressedKeyMatchesActiveDigit =
         key === digitsTemp[activeDigit].digit;
-      pressedKeyMatchesACtiveDigit &&
+      pressedKeyMatchesActiveDigit &&
         setDigits(
           digitsTemp.map((digit, i) =>
             i === activeDigit ? { ...digit, reveal: true } : digit
           )
         );
-      pressedKeyMatchesACtiveDigit && setActiveDigit(activeDigit + 1);
+      pressedKeyMatchesActiveDigit && setActiveDigit(activeDigit + 1);
     };
     document.addEventListener("keypress", revealWhenMatch, false);
     return () => document.removeEventListener("keypress", revealWhenMatch);
   }, [activeDigit, digitsTemp]);
-  // const digits = number
-  //   .toString(10)
-  //   .split("")
-  //   .map((digit, i) => (
-  //     <Digit key={parseInt(digit, 10) + `${i}`} active={i === activeDigit}>
-  //       {parseInt(digit, 10)}
-  //     </Digit>
-  //   ));
+
   return (
     <>
       {digitsTemp.map(({ digit, reveal }, i) => (
@@ -66,7 +59,7 @@ export function Digit({
   reveal?: boolean;
 }) {
   return (
-    <div style={{ color: active ? "red" : "inherit" }}>
+    <div style={{ color: active ? "var(--pink)" : "inherit" }}>
       {reveal ? children : "*"}
     </div>
   );
