@@ -9,6 +9,25 @@ interface NumberWrapperProps {
 const NumberWrapper: React.FC<NumberWrapperProps> = ({
   number,
 }: NumberWrapperProps) => {
+  const [digitsTemp, activeDigit] = useRevealingNumber(number);
+  return (
+    <>
+      {digitsTemp.map(({ digit, reveal }, i) => (
+        <Digit
+          key={parseInt(digit, 10) + `${i}`}
+          reveal={reveal}
+          active={i === activeDigit}
+        >
+          {parseInt(digit, 10)}
+        </Digit>
+      ))}
+    </>
+  );
+};
+
+const useRevealingNumber = (
+  number: number
+): Readonly<[ReadonlyArray<DigitMetadata>, number]> => {
   const [activeDigit, setActiveDigit] = React.useState(0);
   const [digitsTemp, setDigits] = React.useState<ReadonlyArray<DigitMetadata>>(
     number
@@ -32,19 +51,7 @@ const NumberWrapper: React.FC<NumberWrapperProps> = ({
     return () => document.removeEventListener("keypress", revealWhenMatch);
   }, [activeDigit, digitsTemp]);
 
-  return (
-    <>
-      {digitsTemp.map(({ digit, reveal }, i) => (
-        <Digit
-          key={parseInt(digit, 10) + `${i}`}
-          reveal={reveal}
-          active={i === activeDigit}
-        >
-          {parseInt(digit, 10)}
-        </Digit>
-      ))}
-    </>
-  );
+  return [digitsTemp, activeDigit] as const;
 };
 
 export default NumberWrapper;
