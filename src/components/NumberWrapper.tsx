@@ -34,7 +34,6 @@ const useRevealingNumber = (
   number: number
 ): Readonly<[ReadonlyArray<DigitMetadata>, number, boolean]> => {
   const [activeDigit, setActiveDigit] = React.useState(0);
-  console.log({ number });
   const [digitsTemp, setDigits] = React.useState<ReadonlyArray<DigitMetadata>>(
     number
       .toString(10)
