@@ -1,45 +1,44 @@
 import React from "react";
 import "./App.css";
 import NumberWrapper from "./components/NumberWrapper";
+import { UseSpeechSynthesis } from "./hooks/useSpeechSynthesis";
+import { UseRoute } from "./RouteContext";
 const MAX_NUMBER = 100;
 const generateRandomNumber = (max: number) => Math.round(Math.random() * max);
 function App() {
-  const [utterance, setUtterance] = React.useState<SpeechSynthesisUtterance>();
+  const [route, setRoute] = UseRoute();
   const timerRef = React.useRef<ReturnType<typeof setTimeout>>();
   const [letsGo, setLetsGo] = React.useState(false);
   const [number, setNumber] = React.useState(() =>
     generateRandomNumber(MAX_NUMBER)
   );
+  const { play, setText } = UseSpeechSynthesis();
 
   React.useEffect(() => {
-    const timeout =
-      letsGo && utterance
-        ? setTimeout(() => {
-            window.speechSynthesis.speak(utterance);
-          }, 200)
-        : undefined;
+    const timeout = letsGo
+      ? setTimeout(() => {
+          play();
+        }, 200)
+      : undefined;
     return () => {
       clearTimeout(timeout);
       window.speechSynthesis.cancel();
     };
-  }, [utterance, letsGo]);
+  }, [letsGo, play]);
 
   React.useEffect(() => {
-    const utterance = new SpeechSynthesisUtterance(number.toString());
-    utterance.rate = 0.8;
-    utterance.lang = "de-DE";
-    setUtterance(utterance);
-  }, [letsGo, number]);
+    setText(number.toString());
+  }, [number, setText]);
 
   const replayOnSpace = React.useCallback(
     (ev: KeyboardEvent) => {
-      if (ev.code === "Space" && letsGo && utterance) {
+      if (ev.code === "Space" && letsGo) {
         ev.preventDefault();
         ev.stopPropagation();
-        window.speechSynthesis.speak(utterance);
+        play();
       }
     },
-    [letsGo, utterance]
+    [letsGo, play]
   );
 
   React.useEffect(() => {
@@ -58,12 +57,22 @@ function App() {
     }, 1000);
   };
 
+  const start = () => {
+    setLetsGo(true);
+    setRoute("numbers");
+  };
+
+  !letsGo && route !== "start" && setRoute("start");
+
   return (
     <div className="App h-screen">
-      {letsGo && <NumberWrapper number={number} onComplete={renewNumber} />}
-      {!letsGo && (
-        <button onClick={() => setLetsGo(true)}>Gimme a nummer!</button>
+      {letsGo && route === "numbers" && (
+        <NumberWrapper number={number} onComplete={renewNumber} />
       )}
+      {route === "start" && (
+        <button onClick={() => start()}>Gimme a nummer!</button>
+      )}
+      {letsGo && route === "summary" && <>done!</>}
     </div>
   );
 }

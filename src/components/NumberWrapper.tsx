@@ -44,7 +44,7 @@ const useRevealingNumber = (
   React.useEffect(() => {
     const revealWhenMatch = ({ key }: KeyboardEvent) => {
       const pressedKeyMatchesActiveDigit =
-        key === digitsTemp[activeDigit].digit;
+        key === digitsTemp[activeDigit]?.digit;
       pressedKeyMatchesActiveDigit &&
         setDigits(
           digitsTemp.map((digit, i) =>
