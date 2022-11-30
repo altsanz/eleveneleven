@@ -16,8 +16,8 @@ export const Number: React.FC<NumberWrapperProps> = ({
     complete && onComplete();
   }, [complete, onComplete]);
   return (
-    <>
-      <div className="flex text-5xl justify-center">
+    <div className="h-full grid grid-cols-1 grid-rows-3">
+      <div className="row-span-2 flex text-5xl place-self-center">
         {digitsTemp.map(({ digit, reveal }, i) => (
           <Digit
             key={parseInt(digit, 10) + `${i}`}
@@ -28,8 +28,12 @@ export const Number: React.FC<NumberWrapperProps> = ({
           </Digit>
         ))}
       </div>
-      {isTouchDevice() && <Numpad onClick={submitNumber} />}
-    </>
+      {isTouchDevice() && (
+        <div className="row-span-1">
+          <Numpad onClick={submitNumber} />
+        </div>
+      )}
+    </div>
   );
 };
 

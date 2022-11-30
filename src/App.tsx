@@ -68,7 +68,7 @@ function App() {
 
   return (
     <div className="App flex h-screen justify-center align-middle flex-col">
-      <div className="grow-1">
+      <div className="h-full">
         {letsGo && route === "numbers" && (
           <Number number={number} onComplete={renewNumber} />
         )}

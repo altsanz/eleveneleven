@@ -25,7 +25,7 @@ const NumpadKey = ({
   return (
     <button
       onClick={() => onClick(number)}
-      className="numpad-key active:bg-purple-700 border border-purple-700 rounded text-pink-600 justify-items-stretch "
+      className="numpad-key active:bg-purple-700 border border-purple-700 rounded text-pink-600 justify-items-stretch  h-9 text-lg"
     >
       {number}
     </button>
