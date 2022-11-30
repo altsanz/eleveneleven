@@ -1,8 +1,10 @@
 import React from "react";
 import "./App.css";
-import NumberWrapper from "./components/NumberWrapper";
+import { Numpad } from "./components/Numpad/Numpad";
+import { UseRoute } from "./contexts/RouteContext";
 import { UseSpeechSynthesis } from "./hooks/useSpeechSynthesis";
-import { UseRoute } from "./RouteContext";
+import { Number } from "./components/Number/Number";
+
 const MAX_NUMBER = 100;
 const generateRandomNumber = (max: number) => Math.round(Math.random() * max);
 function App() {
@@ -12,7 +14,7 @@ function App() {
   const [number, setNumber] = React.useState(() =>
     generateRandomNumber(MAX_NUMBER)
   );
-  const { play, setText } = UseSpeechSynthesis();
+  const { play, setText: setSpeechText } = UseSpeechSynthesis();
 
   React.useEffect(() => {
     const timeout = letsGo
@@ -27,8 +29,8 @@ function App() {
   }, [letsGo, play]);
 
   React.useEffect(() => {
-    setText(number.toString());
-  }, [number, setText]);
+    setSpeechText(number.toString());
+  }, [number, setSpeechText]);
 
   const replayOnSpace = React.useCallback(
     (ev: KeyboardEvent) => {
@@ -65,16 +67,30 @@ function App() {
   !letsGo && route !== "start" && setRoute("start");
 
   return (
-    <div className="App h-screen">
-      {letsGo && route === "numbers" && (
-        <NumberWrapper number={number} onComplete={renewNumber} />
-      )}
-      {route === "start" && (
-        <button onClick={() => start()}>Gimme a nummer!</button>
-      )}
-      {letsGo && route === "summary" && <>done!</>}
+    <div className="App flex h-screen justify-center align-middle flex-col">
+      <div className="grow-1">
+        {letsGo && route === "numbers" && (
+          <>
+            <Number number={number} onComplete={renewNumber} />
+            {isTouchDevice() && <Numpad onClick={(number) => {}} />}
+          </>
+        )}
+        {route === "start" && (
+          <button
+            className="text-4xl md:text-5xl text-purple-500 w-screen text-center cursor-pointer"
+            onClick={() => start()}
+          >
+            Gimme a nummer!
+          </button>
+        )}
+        {letsGo && route === "summary" && <>done!</>}
+      </div>
     </div>
   );
+}
+
+function isTouchDevice(): boolean {
+  return "ontouchstart" in window || navigator.maxTouchPoints > 0;
 }
 
 export default App;
