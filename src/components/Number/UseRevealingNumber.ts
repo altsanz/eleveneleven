@@ -4,7 +4,9 @@ import { useActiveDigit } from "./UseActiveDigit";
 
 export const useRevealingNumber = (
   number: number
-): Readonly<[ReadonlyArray<DigitMetadata>, number, boolean]> => {
+): Readonly<
+  [ReadonlyArray<DigitMetadata>, number, boolean, (number: number) => void]
+> => {
   const { activeDigit, resetActiveDigit, advanceActiveDigit } =
     useActiveDigit();
   const [digitsTemp, setDigits] = React.useState<ReadonlyArray<DigitMetadata>>(
@@ -37,7 +39,22 @@ export const useRevealingNumber = (
   }, [number, resetActiveDigit]);
 
   const fullNumberRevealed = activeDigit === digitsTemp.length;
-  return [digitsTemp, activeDigit, fullNumberRevealed] as const;
+
+  const submitNumber = React.useCallback(
+    (number: number) => {
+      const pressedKeyMatchesActiveDigit =
+        parseInt(digitsTemp[activeDigit]?.digit, 10) === number;
+      pressedKeyMatchesActiveDigit &&
+        setDigits(
+          digitsTemp.map((digit, i) =>
+            i === activeDigit ? { ...digit, reveal: true } : digit
+          )
+        );
+      pressedKeyMatchesActiveDigit && advanceActiveDigit();
+    },
+    [activeDigit, advanceActiveDigit, digitsTemp]
+  );
+  return [digitsTemp, activeDigit, fullNumberRevealed, submitNumber] as const;
 };
 
 function splitNumber(number: number): ReadonlyArray<DigitMetadata> {
