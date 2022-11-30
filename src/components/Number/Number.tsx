@@ -1,4 +1,5 @@
 import React from "react";
+import { Numpad } from "../Numpad/Numpad";
 import { NumberWrapperProps } from "./types";
 import { useRevealingNumber } from "./UseRevealingNumber";
 
@@ -9,22 +10,26 @@ export const Number: React.FC<NumberWrapperProps> = ({
   number,
   onComplete,
 }: NumberWrapperProps) => {
-  const [digitsTemp, activeDigit, complete] = useRevealingNumber(number);
+  const [digitsTemp, activeDigit, complete, submitNumber] =
+    useRevealingNumber(number);
   React.useEffect(() => {
     complete && onComplete();
   }, [complete, onComplete]);
   return (
-    <div className="flex text-5xl justify-center">
-      {digitsTemp.map(({ digit, reveal }, i) => (
-        <Digit
-          key={parseInt(digit, 10) + `${i}`}
-          reveal={reveal}
-          active={i === activeDigit}
-        >
-          {parseInt(digit, 10)}
-        </Digit>
-      ))}
-    </div>
+    <>
+      <div className="flex text-5xl justify-center">
+        {digitsTemp.map(({ digit, reveal }, i) => (
+          <Digit
+            key={parseInt(digit, 10) + `${i}`}
+            reveal={reveal}
+            active={i === activeDigit}
+          >
+            {parseInt(digit, 10)}
+          </Digit>
+        ))}
+      </div>
+      {isTouchDevice() && <Numpad onClick={submitNumber} />}
+    </>
   );
 };
 
@@ -49,4 +54,8 @@ export function Digit({
       {reveal ? children : "*"}
     </div>
   );
+}
+
+function isTouchDevice(): boolean {
+  return "ontouchstart" in window || navigator.maxTouchPoints > 0;
 }

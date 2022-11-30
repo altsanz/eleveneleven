@@ -70,10 +70,7 @@ function App() {
     <div className="App flex h-screen justify-center align-middle flex-col">
       <div className="grow-1">
         {letsGo && route === "numbers" && (
-          <>
-            <Number number={number} onComplete={renewNumber} />
-            {isTouchDevice() && <Numpad onClick={(number) => {}} />}
-          </>
+          <Number number={number} onComplete={renewNumber} />
         )}
         {route === "start" && (
           <button
@@ -87,10 +84,6 @@ function App() {
       </div>
     </div>
   );
-}
-
-function isTouchDevice(): boolean {
-  return "ontouchstart" in window || navigator.maxTouchPoints > 0;
 }
 
 export default App;
