@@ -10,11 +10,12 @@ export const Number: React.FC<NumberWrapperProps> = ({
   number,
   onComplete,
 }: NumberWrapperProps) => {
-  const [digitsTemp, activeDigit, complete, submitNumber] =
-    useRevealingNumber(number);
-  React.useEffect(() => {
-    complete && onComplete();
-  }, [complete, onComplete]);
+  const [digitsTemp, activeDigit, submitNumber] = useRevealingNumber(
+    number,
+    onComplete,
+    () => console.log("wrong numme")
+  );
+
   return (
     <div className="h-full grid grid-cols-1 grid-rows-3">
       <div className="row-span-2 flex text-5xl place-self-center">
