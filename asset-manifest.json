@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/eleveneleven/static/css/main.e246fe58.css",
+    "main.js": "/eleveneleven/static/js/main.701e016d.js",
+    "static/js/787.935f2f68.chunk.js": "/eleveneleven/static/js/787.935f2f68.chunk.js",
+    "index.html": "/eleveneleven/index.html",
+    "main.e246fe58.css.map": "/eleveneleven/static/css/main.e246fe58.css.map",
+    "main.701e016d.js.map": "/eleveneleven/static/js/main.701e016d.js.map",
+    "787.935f2f68.chunk.js.map": "/eleveneleven/static/js/787.935f2f68.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e246fe58.css",
+    "static/js/main.701e016d.js"
+  ]
+}
