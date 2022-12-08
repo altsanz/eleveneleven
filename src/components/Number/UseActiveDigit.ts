@@ -1,11 +1,17 @@
 import React from "react";
 
-export const useActiveDigit = () => {
-  const [activeDigit, setActiveDigit] = React.useState(0);
-  const resetActiveDigit = React.useCallback(() => setActiveDigit(0), []);
-  const advanceActiveDigit = React.useCallback(
-    () => setActiveDigit(activeDigit + 1),
-    [activeDigit]
+/**
+ * Handles and reset the index regarding a number of the active digit
+ */
+export const useActiveDigitIndex = () => {
+  const [activeDigitIndex, setActiveDigitIndex] = React.useState(0);
+  const resetActiveDigitIndex = React.useCallback(
+    () => setActiveDigitIndex(0),
+    []
   );
-  return { resetActiveDigit, advanceActiveDigit, activeDigit };
+  const advanceActiveDigitIndex = React.useCallback(
+    () => setActiveDigitIndex(activeDigitIndex + 1),
+    [activeDigitIndex]
+  );
+  return { resetActiveDigitIndex, advanceActiveDigitIndex, activeDigitIndex };
 };

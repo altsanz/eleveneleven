@@ -1,16 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { DigitMetadata } from "./types";
-import { useActiveDigit } from "./UseActiveDigit";
+import { useActiveDigitIndex } from "./UseActiveDigit";
 
 export const useRevealingNumber = (
   number: number,
   onComplete?: () => void,
   onWrong?: () => void
-): Readonly<
-  [ReadonlyArray<DigitMetadata>, number, (number: number) => void]
-> => {
-  const { activeDigit, resetActiveDigit, advanceActiveDigit } =
-    useActiveDigit();
+): {
+  digitsTemp: ReadonlyArray<DigitMetadata>;
+  activeDigitIndex: number;
+  submitNumber: (number: number) => void;
+} => {
+  const { activeDigitIndex, resetActiveDigitIndex, advanceActiveDigitIndex } =
+    useActiveDigitIndex();
+
   const [digitsTemp, setDigits] = React.useState<ReadonlyArray<DigitMetadata>>(
     number
       .toString(10)
@@ -20,17 +23,17 @@ export const useRevealingNumber = (
   const submitNumber = React.useCallback(
     (number: number) => {
       const pressedKeyMatchesActiveDigit =
-        parseInt(digitsTemp[activeDigit]?.digit, 10) === number;
+        parseInt(digitsTemp[activeDigitIndex]?.digit, 10) === number;
       pressedKeyMatchesActiveDigit &&
         setDigits(
           digitsTemp.map((digit, i) =>
-            i === activeDigit ? { ...digit, reveal: true } : digit
+            i === activeDigitIndex ? { ...digit, reveal: true } : digit
           )
         );
-      pressedKeyMatchesActiveDigit && advanceActiveDigit();
+      pressedKeyMatchesActiveDigit && advanceActiveDigitIndex();
       !pressedKeyMatchesActiveDigit && onWrong?.();
     },
-    [activeDigit, advanceActiveDigit, digitsTemp, onWrong]
+    [activeDigitIndex, advanceActiveDigitIndex, digitsTemp, onWrong]
   );
 
   React.useEffect(() => {
@@ -41,18 +44,18 @@ export const useRevealingNumber = (
 
     document.addEventListener("keypress", revealWhenMatch, false);
     return () => document.removeEventListener("keypress", revealWhenMatch);
-  }, [activeDigit, advanceActiveDigit, digitsTemp, onWrong, submitNumber]);
+  }, [activeDigitIndex, advanceActiveDigitIndex, digitsTemp, submitNumber]);
 
   React.useEffect(() => {
-    resetActiveDigit();
+    resetActiveDigitIndex();
     setDigits(splitNumber(number));
-  }, [number, resetActiveDigit]);
+  }, [number, resetActiveDigitIndex]);
 
-  const fullNumberRevealed = activeDigit === digitsTemp.length;
+  const fullNumberRevealed = activeDigitIndex === digitsTemp.length;
 
   fullNumberRevealed && onComplete?.();
 
-  return [digitsTemp, activeDigit, submitNumber] as const;
+  return { digitsTemp, activeDigitIndex, submitNumber };
 };
 
 function splitNumber(number: number): ReadonlyArray<DigitMetadata> {

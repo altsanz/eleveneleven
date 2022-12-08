@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Numpad } from "../Numpad/Numpad";
 import { NumberWrapperProps } from "./types";
 import { useRevealingNumber } from "./UseRevealingNumber";
+import { useSpring, animated } from "@react-spring/web";
 
 /**
  * Orchestrates an exercise: which digits to show, which to hide, which one is active
@@ -10,11 +11,19 @@ export const Number: React.FC<NumberWrapperProps> = ({
   number,
   onComplete,
 }: NumberWrapperProps) => {
-  const [digitsTemp, activeDigit, submitNumber] = useRevealingNumber(
+  const [isActiveDigitWrong, setIsActiveDigitWrong] = useState(false);
+
+  const { digitsTemp, activeDigitIndex, submitNumber } = useRevealingNumber(
     number,
     onComplete,
-    () => console.log("wrong numme")
+    () => {
+      setIsActiveDigitWrong(true);
+    }
   );
+
+  useEffect(() => {
+    setIsActiveDigitWrong(false);
+  }, [activeDigitIndex]);
 
   return (
     <div className="h-full grid grid-cols-1 grid-rows-3">
@@ -23,7 +32,8 @@ export const Number: React.FC<NumberWrapperProps> = ({
           <Digit
             key={parseInt(digit, 10) + `${i}`}
             reveal={reveal}
-            active={i === activeDigit}
+            active={i === activeDigitIndex}
+            wrong={i === activeDigitIndex && isActiveDigitWrong}
           >
             {parseInt(digit, 10)}
           </Digit>
@@ -45,19 +55,27 @@ export const Number: React.FC<NumberWrapperProps> = ({
  * @param active Is current digit the one that needs to be written?
  * @returns
  */
-export function Digit({
+function Digit({
   reveal = false,
   children,
   active = false,
+  wrong = false,
 }: {
   children: number;
   active?: boolean;
   reveal?: boolean;
+  wrong?: boolean;
 }) {
+  const spring = useSpring({
+    color: wrong ? "red" : "rgb(236 72 153)",
+  });
   return (
-    <div className={active ? "text-pink-500" : "text-purple-500"}>
+    <animated.div
+      style={active ? spring : {}}
+      className={active ? "text-pink-500" : "text-purple-500"}
+    >
       {reveal ? children : "*"}
-    </div>
+    </animated.div>
   );
 }
 
