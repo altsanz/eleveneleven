@@ -1,5 +1,7 @@
 # 11:11 (Eleven Eleven)
 
+<img src="./mobile-screenshot.jpeg" width="200"/>
+
 Learn German numbers as a second instinct. A random number is told and you need to write it correctly.
 
 AS 👏 FAST 👏 AS 👏 POSSIBLE.
